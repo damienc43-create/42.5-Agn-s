@@ -194,7 +194,7 @@ const DEFAULT_APERO_DEFIS = {
 
 const DEFAULT_COCKTAIL_BASE = ["Rhum blanc","Citron vert","Sucre de canne","Menthe fraîche","Eau gazeuse"];
 const DEFAULT_COCKTAIL_BONUS = "Angostura bitters";
-const DEFAULT_QUIZ_INFO = "Un questionnaire sur la vie d'Agnès. À remplir en équipe sur papier — l'organisatrice saisit ensuite le pourcentage de bonnes réponses.";
+const DEFAULT_QUIZ_INFO = "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier — l'organisatrice saisit ensuite le nombre de bonnes réponses.";
 const DEFAULT_BLINDTEST_INFO = "Un blind test musical : 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Notez vos réponses sur papier — chaque bonne réponse rapporte 1 point.";
 
 const DEFIS_DEF = [
@@ -205,11 +205,11 @@ const DEFIS_DEF = [
    regles:"Prenez une photo souvenir avec toute votre équipe et montrez-la à l'organisatrice pour la faire valider.",
    bareme:"Photo validée = <b>3 points</b>"},
   {id:'corde', nom:'Tir à la corde', emoji:'🪢',
-   regles:"Un grand tir à la corde par équipes ! Affrontez-vous par petits groupes.",
-   bareme:"Équipe victorieuse de son duel = <b>2 points</b>"},
+   regles:"Un grand tir à la corde par équipes, en 2 manches !",
+   bareme:"Chaque manche gagnée = <b>2 points</b> (2 manches disputées, jusqu'à <b>4 points</b>)"},
   {id:'quiz', nom:'Questionnaire', emoji:'📝',
    regles: DEFAULT_QUIZ_INFO,
-   bareme:"100% de bonnes réponses = <b>5 pts</b> · 80 à 99% = <b>3 pts</b> · 50 à 79% = <b>1 pt</b> · moins de 50% = <b>0 pt</b>"},
+   bareme:"100% de bonnes réponses = <b>5 pts</b> · 90 à 99% = <b>4 pts</b> · 80 à 89% = <b>3 pts</b> · 70 à 79% = <b>2 pts</b> · 50 à 69% = <b>1 pt</b> · moins de 50% = <b>0 pt</b>"},
   {id:'blindtest', nom:'Blind test', emoji:'🎧',
    regles: DEFAULT_BLINDTEST_INFO,
    bareme:"1 point par bonne réponse (jusqu'à 20 pts pour les adultes, 10 pts pour les enfants)"},
@@ -227,8 +227,8 @@ function defaultScoresForTeams(teams){
     s[t.id] = {
       apero: {revele:false, valide:false},
       photo:false,
-      corde:false,
-      quiz:null,
+      corde:{manche1:false, manche2:false},
+      quiz:null, // nombre de bonnes réponses sur 20
       blindtest:null,
       cocktail:{ingredients:0, bonus:false}
     };
@@ -238,7 +238,7 @@ function defaultScoresForTeams(teams){
 
 function defaultState(){
   return {
-    v:3,
+    v:4,
     titre:"Les 42,5 ans d'Agnès",
     pin:"4225",
     teams: JSON.parse(JSON.stringify(DEFAULT_TEAMS)),
@@ -254,12 +254,42 @@ function defaultState(){
   };
 }
 
+// Migration : ancien barème (corde = victoire unique, quiz = pourcentage saisi)
+// vers le nouveau (corde = 2 manches, quiz = nombre de bonnes réponses /20).
+// Conserve les scores déjà saisis sans les faire sauter.
+function migrateState(s){
+  if(!s || !s.scores) return s;
+  if(s.v===3){
+    Object.keys(s.scores).forEach(id=>{
+      const sc = s.scores[id];
+      if(sc && typeof sc.corde === 'boolean'){
+        sc.corde = { manche1: sc.corde, manche2:false };
+      }
+      if(sc && typeof sc.quiz === 'number'){
+        sc.quiz = Math.round(sc.quiz/100*20);
+      }
+    });
+    s.v = 4;
+  }
+  // filet de sécurité si jamais un score corde arrive encore sous l'ancienne forme
+  Object.keys(s.scores).forEach(id=>{
+    const sc = s.scores[id];
+    if(sc && typeof sc.corde === 'boolean'){
+      sc.corde = { manche1: sc.corde, manche2:false };
+    }
+  });
+  return s;
+}
+
 function loadLocal(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return null;
-    const parsed = JSON.parse(raw);
-    if(!parsed || parsed.v!==3) return null;
+    let parsed = JSON.parse(raw);
+    if(!parsed) return null;
+    if(parsed.v===3) parsed = migrateState(parsed);
+    if(parsed.v!==4) return null;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
     return parsed;
   }catch(e){ return null; }
 }
@@ -272,13 +302,16 @@ let STATE = loadLocal() || defaultState();
 ========================================================= */
 function ptsApero(sc){ return sc.apero.valide ? 5 : 0; }
 function ptsPhoto(sc){ return sc.photo ? 3 : 0; }
-function ptsCorde(sc){ return sc.corde ? 2 : 0; }
+function ptsCorde(sc){ const c=sc.corde||{}; return (c.manche1?2:0)+(c.manche2?2:0); }
 function ptsQuiz(sc){
-  const p = sc.quiz;
-  if(p===null || p===undefined || p==='') return 0;
-  if(p>=100) return 5;
-  if(p>=80) return 3;
-  if(p>=50) return 1;
+  const n = sc.quiz;
+  if(n===null || n===undefined || n==='') return 0;
+  const pct = (Number(n)/20)*100;
+  if(pct>=100) return 5;
+  if(pct>=90) return 4;
+  if(pct>=80) return 3;
+  if(pct>=70) return 2;
+  if(pct>=50) return 1;
   return 0;
 }
 function ptsBlindtest(sc){ return (sc.blindtest===null || sc.blindtest===undefined || sc.blindtest==='') ? 0 : Number(sc.blindtest); }
@@ -366,7 +399,8 @@ function ensurePolling(){
   pollTimer = setInterval(async ()=>{
     if(document.hidden) return;
     if(STATE.sync.mode==='live' && STATE.sync.bucket && STATE.sync.role==='guest'){
-      const remote = await kvPull(STATE.sync.bucket);
+      let remote = await kvPull(STATE.sync.bucket);
+      if(remote) remote = migrateState(remote);
       if(remote && (remote.sync?.updatedAt||0) > (STATE.sync.updatedAt||0)){
         const myBucket = STATE.sync.bucket;
         STATE = remote;
@@ -413,8 +447,9 @@ async function init(){
     STATE.sync.mode='live'; STATE.sync.role='guest'; STATE.sync.bucket=g;
     STATE.sync.fbProject=p; STATE.sync.fbKey=k;
     saveLocal();
-    const remote = await kvPull(g);
+    let remote = await kvPull(g);
     if(remote){
+      remote = migrateState(remote);
       remote.sync = remote.sync || {};
       remote.sync.bucket=g; remote.sync.role='guest'; remote.sync.mode='live';
       remote.sync.fbProject=p; remote.sync.fbKey=k;
@@ -644,9 +679,10 @@ function renderAdminScores(){
     return `<div class="team-admin-card">
       <h4><span class="team-dot" style="background:${t.couleur}"></span>${t.emoji} ${escapeHtml(t.nom)} <span class="muted">(${t.categorie})</span> — <b>${ptsTotal(sc)} pts</b></h4>
       <div class="checkline"><input type="checkbox" ${sc.photo?'checked':''} onchange="updScore('${t.id}','photo',this.checked)"> Photo validée (3 pts)</div>
-      <div class="checkline"><input type="checkbox" ${sc.corde?'checked':''} onchange="updScore('${t.id}','corde',this.checked)"> Victoire tir à la corde (2 pts)</div>
-      <label>Questionnaire — % de bonnes réponses</label>
-      <input type="number" min="0" max="100" value="${sc.quiz===null?'':sc.quiz}" placeholder="ex: 80" onchange="updScore('${t.id}','quiz',this.value===''?null:Number(this.value))">
+      <div class="checkline"><input type="checkbox" ${sc.corde.manche1?'checked':''} onchange="updCorde('${t.id}','manche1',this.checked)"> Manche 1 gagnée (2 pts)</div>
+      <div class="checkline"><input type="checkbox" ${sc.corde.manche2?'checked':''} onchange="updCorde('${t.id}','manche2',this.checked)"> Manche 2 gagnée (2 pts)</div>
+      <label>Questionnaire — nombre de bonnes réponses (sur 20)</label>
+      <input type="number" min="0" max="20" value="${sc.quiz===null?'':sc.quiz}" placeholder="ex: 17" onchange="updScore('${t.id}','quiz',this.value===''?null:Number(this.value))">
       <label>Blind test — nombre de bonnes réponses (sur ${t.categorie==='adulte'?20:10})</label>
       <input type="number" min="0" max="${t.categorie==='adulte'?20:10}" value="${sc.blindtest===null?'':sc.blindtest}" placeholder="ex: 14" onchange="updScore('${t.id}','blindtest',this.value===''?null:Number(this.value))">
       <label>Cocktail — ingrédients de base trouvés (0 à 5)</label>
@@ -657,6 +693,10 @@ function renderAdminScores(){
 }
 function updScore(teamId, field, value){
   STATE.scores[teamId][field] = value;
+  persist(); render();
+}
+function updCorde(teamId, field, value){
+  STATE.scores[teamId].corde[field] = value;
   persist(); render();
 }
 function updCocktail(teamId, field, value){
@@ -852,8 +892,9 @@ function importJson(evt){
   const reader = new FileReader();
   reader.onload = () => {
     try{
-      const data = JSON.parse(reader.result);
-      if(data && data.v===2){
+      let data = JSON.parse(reader.result);
+      if(data && (data.v===3 || data.v===4)){
+        data = migrateState(data);
         STATE = data; persist(); flash('✅ Sauvegarde importée'); render();
       } else { flash('❌ Fichier invalide'); }
     }catch(e){ flash('❌ Fichier invalide'); }
