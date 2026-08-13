@@ -43,12 +43,13 @@
     text-align:center;color:#fff;padding:18px 6px 8px;
   }
   .hero img{
-    width:150px;height:150px;object-fit:cover;border-radius:50%;
-    border:5px solid var(--gold);box-shadow:0 8px 20px rgba(0,0,0,.35);
-    margin-bottom:14px;
+    width:min(440px, 82vw);height:min(440px, 82vw);object-fit:cover;border-radius:50%;
+    border:8px solid var(--gold);box-shadow:0 14px 34px rgba(0,0,0,.45);
+    margin-bottom:18px;
   }
-  .hero h1{font-size:28px;margin:0 0 6px;text-shadow:0 3px 10px rgba(0,0,0,.3);}
-  .hero p{font-size:15px;opacity:.95;line-height:1.5;}
+  .hero h1{font-size:36px;margin:0 0 12px;text-shadow:0 3px 10px rgba(0,0,0,.3);}
+  .hero p{font-size:19px;opacity:.95;line-height:1.6;}
+  .hero p b{font-size:22px;}
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
     font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;
@@ -161,61 +162,61 @@ const STORAGE_KEY = "agnes425_state_v3";
 const DEVICE_TEAM_KEY = "agnes425_mon_equipe_v1";
 
 const DEFAULT_TEAMS = [
-  {id:'mario',        categorie:'enfant', nom:'Mario',          emoji:'🍄', couleur:'#E6299E'},
-  {id:'pokemon',       categorie:'enfant', nom:'Pokémon',        emoji:'⚡', couleur:'#F5D400'},
-  {id:'gateaux',       categorie:'enfant', nom:'Gâteaux',        emoji:'🍰', couleur:'#F2994A'},
-  {id:'princesse',     categorie:'adulte', nom:'Princesse',      emoji:'👑', couleur:'#C9A7EB'},
   {id:'apero',         categorie:'adulte', nom:'Apéro',          emoji:'🍹', couleur:'#F4E285'},
   {id:'harrypotter',   categorie:'adulte', nom:'Harry Potter',   emoji:'🪄', couleur:'#3D8B45'},
-  {id:'avengers',      categorie:'adulte', nom:'Avengers',       emoji:'🦸', couleur:'#1F6FB2'},
+  {id:'princesse',     categorie:'enfant', nom:'Princesse',      emoji:'👑', couleur:'#C9A7EB'},
+  {id:'pirates',       categorie:'adulte', nom:'Pirates',        emoji:'🏴‍☠️', couleur:'#2C3E50'},
+  {id:'pokemon',       categorie:'enfant', nom:'Pokémon',        emoji:'⚡', couleur:'#F5D400'},
   {id:'metiers',       categorie:'adulte', nom:'Métiers',        emoji:'🛠️', couleur:'#9B59B6'},
   {id:'regionfrance',  categorie:'adulte', nom:'Région France',  emoji:'🗺️', couleur:'#7FB3D5'},
   {id:'plats',         categorie:'adulte', nom:'Plats',          emoji:'🍽️', couleur:'#8FCB8F'},
-  {id:'starwars',      categorie:'adulte', nom:'Star Wars',      emoji:'✨', couleur:'#B9BEC4'},
+  {id:'mariokart',     categorie:'enfant', nom:'Mario Kart',     emoji:'🏎️', couleur:'#E67E22'},
+  {id:'fromages',      categorie:'adulte', nom:'Fromages',       emoji:'🧀', couleur:'#F1C40F'},
+  {id:'asse',          categorie:'adulte', nom:'ASSE',           emoji:'💚', couleur:'#1ABC9C'},
   {id:'couleurs',      categorie:'adulte', nom:'Couleurs',       emoji:'🎨', couleur:'#E74C3C'},
 ];
 
 // Chaque équipe a SON défi apéro : pendant l'apéro, une musique sur le thème
 // de l'équipe est diffusée. Quand l'équipe la reconnaît, elle réalise son défi.
 const DEFAULT_APERO_DEFIS = {
-  mario:        "Courir, sauter et écraser les champignons.",
-  princesse:    "Remplir un récipient d'eau grâce à un relais, avec un petit gobelet et un autre ustensile.",
-  apero:        "Faire danser la manivelle à un maximum de monde.",
-  harrypotter:  "Voler au milieu des gens sur un balai, baguette en main, et figer les gens avec une formule magique.",
-  pokemon:      "Tirer des balles sur un trampoline pour toucher les Pokémon.",
-  avengers:     "Faire une photo de groupe en pose super-héros, avec le drone.",
-  metiers:      "Faire une chenille avec un tuyau.",
-  regionfrance: "Chanter la Marseillaise, la main sur le cœur.",
-  gateaux:      "Toute l'équipe doit se placer au sol pour mimer ensemble la forme d'un croissant avant la fin de la musique.",
+  apero:        "Faire danser « La Manivelle » à un maximum de monde.",
+  harrypotter:  "Voler au milieu des gens sur un balai avec une balle, comme dans un match de Quidditch, puis utiliser une baguette et une formule magique pour figer les gens.",
+  princesse:    "Remplir un récipient d'eau grâce à un relais, à l'aide d'un petit gobelet et d'autres ustensiles.",
+  pirates:      "Prendre des bancs et faire semblant de ramer. Simuler des vagues et se penchant tous ensemble : devant, à gauche, à droite... jusqu'à affronter une grosse tempête.",
+  pokemon:      "Tirer les balles sur le trampoline pour toucher les Pokémon.",
+  metiers:      "Faire une chenille en se tenant tous ensemble à l'aide d'un tuyau.",
+  regionfrance: "Chanter La Marseillaise, la main sur le cœur.",
   plats:        "Faire une ronde bretonne géante.",
-  starwars:     "Défiez la Force : transportez les ballons sans utiliser les mains.",
-  couleurs:     "Regrouper toutes les équipes par couleur pour une photo.",
+  mariokart:    "Les 10 se mettent en file et miment une course de Mario Kart : volant, virages, dérapages, carapaces reçues... puis franchissent la ligne d'arrivée tous ensemble.",
+  fromages:     "Le haka de Montbrison : inventer un haka et terminer tous ensemble en criant : « MONT-BRI-SON ! »",
+  asse:         "Faire faire une ola à tout le monde.",
+  couleurs:     "Regrouper toutes les équipes par couleur pour prendre une photo de groupe.",
 };
 
 const DEFAULT_COCKTAIL_BASE = ["Rhum blanc","Citron vert","Sucre de canne","Menthe fraîche","Eau gazeuse"];
 const DEFAULT_COCKTAIL_BONUS = "Angostura bitters";
-const DEFAULT_QUIZ_INFO = "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier — l'organisatrice saisit ensuite le nombre de bonnes réponses.";
-const DEFAULT_BLINDTEST_INFO = "Un blind test musical : 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Notez vos réponses sur papier — chaque bonne réponse rapporte 1 point.";
+const DEFAULT_QUIZ_INFO = "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier — Jessica saisit ensuite le nombre de bonnes réponses.";
+const DEFAULT_BLINDTEST_INFO = "Un blind test musical : chansons, musiques de films et de séries. 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Votre équipe doit désigner son champion pour ce défi — chaque bonne réponse rapporte 1 point.";
 
 const DEFIS_DEF = [
   {id:'apero', nom:'Défi Apéro', emoji:'🍹',
-   regles:"Pendant l'apéro, une musique sur le thème de votre équipe sera diffusée à un moment de l'après-midi. Dès que vous la reconnaissez, réalisez le défi surprise associé à votre équipe et faites-le valider par l'organisatrice.",
-   bareme:"Défi apéro validé = <b>5 points</b>"},
+   regles:"Pendant l'apéro, une musique sur le thème de votre équipe sera diffusée à un moment de l'après-midi. Dès que vous la reconnaissez, réalisez le défi surprise associé à votre équipe et faites-le valider par Jessica.",
+   bareme:"Défi apéro validé = <b>20 points</b>"},
   {id:'photo', nom:'Photo', emoji:'📸',
-   regles:"Prenez une photo souvenir avec toute votre équipe et montrez-la à l'organisatrice pour la faire valider.",
-   bareme:"Photo validée = <b>3 points</b>"},
+   regles:"Prenez une photo souvenir avec toute votre équipe et montrez-la à Agnès !",
+   bareme:"Photo validée = <b>20 points</b>"},
   {id:'corde', nom:'Tir à la corde', emoji:'🪢',
-   regles:"Un grand tir à la corde par équipes, en 2 manches !",
-   bareme:"Chaque manche gagnée = <b>2 points</b> (2 manches disputées, jusqu'à <b>4 points</b>)"},
+   regles:"Un grand tir à la corde par équipes, en 2 manches ! Votre équipe doit désigner ses 5 meilleurs tireurs pour ce défi.",
+   bareme:"Chaque manche (victoire) = <b>10 points</b> (2 manches disputées, jusqu'à <b>20 points</b>)"},
   {id:'quiz', nom:'Questionnaire', emoji:'📝',
    regles: DEFAULT_QUIZ_INFO,
-   bareme:"100% de bonnes réponses = <b>5 pts</b> · 90 à 99% = <b>4 pts</b> · 80 à 89% = <b>3 pts</b> · 70 à 79% = <b>2 pts</b> · 50 à 69% = <b>1 pt</b> · moins de 50% = <b>0 pt</b>"},
+   bareme:"20 questions, <b>1 point par bonne réponse</b> — jusqu'à <b>20 points</b>"},
   {id:'blindtest', nom:'Blind test', emoji:'🎧',
    regles: DEFAULT_BLINDTEST_INFO,
    bareme:"1 point par bonne réponse (jusqu'à 20 pts pour les adultes, 10 pts pour les enfants)"},
   {id:'cocktail', nom:'Cocktail mystère', emoji:'🍸',
    regles:"Retrouvez les ingrédients du cocktail mystère d'Agnès !",
-   bareme:"1 point par ingrédient trouvé parmi les 5 de base (5 pts max) + <b>2 pts bonus</b> si vous trouvez le 6ème ingrédient, plus difficile à deviner. Total possible : <b>7 points</b>"},
+   bareme:"4 points par ingrédient trouvé parmi les 5 de base (20 pts max) + <b>20 pts bonus</b> si vous trouvez le 6ème ingrédient, plus difficile à deviner. Total possible : <b>40 points</b>"},
 ];
 
 /* =========================================================
@@ -278,6 +279,62 @@ function migrateState(s){
       sc.corde = { manche1: sc.corde, manche2:false };
     }
   });
+  // Recalage de la liste des équipes : si la liste d'équipes courante (DEFAULT_TEAMS)
+  // a changé (renommage/ajout/suppression d'équipes), on la resynchronise tout en
+  // conservant les scores déjà saisis pour les équipes qui existent encore.
+  const currentIds = DEFAULT_TEAMS.map(t=>t.id);
+  const savedIds = (s.teams||[]).map(t=>t.id);
+  const rosterChanged = currentIds.length !== savedIds.length || currentIds.some(id=>!savedIds.includes(id));
+  if(rosterChanged){
+    const oldTeamsById = {};
+    (s.teams||[]).forEach(t=>{ oldTeamsById[t.id] = t; });
+    const oldScores = s.scores || {};
+    const oldApero = (s.contenu && s.contenu.apero) || {};
+    s.teams = DEFAULT_TEAMS.map(t => oldTeamsById[t.id]
+      ? { ...t, nom: oldTeamsById[t.id].nom, couleur: oldTeamsById[t.id].couleur, emoji: oldTeamsById[t.id].emoji }
+      : { ...t });
+    const freshScores = defaultScoresForTeams(DEFAULT_TEAMS);
+    const newScores = {};
+    currentIds.forEach(id => { newScores[id] = oldScores[id] || freshScores[id]; });
+    s.scores = newScores;
+    s.contenu = s.contenu || {};
+    const newApero = {};
+    currentIds.forEach(id => { newApero[id] = (oldApero[id] !== undefined) ? oldApero[id] : (DEFAULT_APERO_DEFIS[id] || ''); });
+    s.contenu.apero = newApero;
+  }
+  // Recale toujours la catégorie (enfant/adulte) sur la liste de référence,
+  // même quand la liste d'équipes elle-même n'a pas changé (ex: correction
+  // de la répartition Enfants/Adultes) — nom/couleur restent modifiables.
+  const catById = {};
+  DEFAULT_TEAMS.forEach(t=>{ catById[t.id] = t.categorie; });
+  (s.teams||[]).forEach(t=>{ if(catById[t.id]) t.categorie = catById[t.id]; });
+
+  // Corrige les textes restés bloqués sur une ancienne version par défaut
+  // (ces champs sont copiés dans le state au premier chargement, donc une
+  // mise à jour du texte par défaut ne les touchait plus automatiquement).
+  // On ne remplace QUE si le texte sauvegardé correspond à une ancienne
+  // version connue, pour ne jamais écraser une modif volontaire de Jessica.
+  const OLD_BLINDTEST_INFOS = [
+    "Un blind test musical : 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Notez vos réponses sur papier — chaque bonne réponse rapporte 1 point.",
+    "Un blind test musical : 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Votre équipe doit désigner son champion (1 personne) pour répondre à ce défi. Notez vos réponses sur papier — chaque bonne réponse rapporte 1 point.",
+    "Un blind test musical : 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Votre équipe doit désigner son ou sa spécialiste, celui ou celle qui rapportera le plus de points, pour répondre à ce défi. Notez vos réponses sur papier — chaque bonne réponse rapporte 1 point.",
+    "Un blind test musical : 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Votre équipe doit désigner son champion pour ce défi — chaque bonne réponse rapporte 1 point.",
+  ];
+  if(s.contenu && OLD_BLINDTEST_INFOS.includes(s.contenu.blindtestInfo)){
+    s.contenu.blindtestInfo = DEFAULT_BLINDTEST_INFO;
+  }
+  const OLD_APERO_TEXTS = {
+    pirates:   "Prendre les bancs et faire semblant de ramer. Simuler des vagues en se penchant tous ensemble : devant, à gauche, à droite... jusqu'à affronter une grosse tempête.",
+    pokemon:   "Tirer des balles sur le trampoline pour toucher les Pokémon.",
+    mariokart: "Se mettre en file et mimer une course de Mario Kart : volant, virages, dérapages, carapaces reçues... puis franchir la ligne d'arrivée tous ensemble.",
+    fromages:  "Le haka de Montbrison : inventer un haka et le terminer tous ensemble en criant « MONT-BRI-SON ! »",
+    asse:      "Faire une ola à tout le monde.",
+  };
+  if(s.contenu && s.contenu.apero){
+    Object.keys(OLD_APERO_TEXTS).forEach(id=>{
+      if(s.contenu.apero[id] === OLD_APERO_TEXTS[id]) s.contenu.apero[id] = DEFAULT_APERO_DEFIS[id];
+    });
+  }
   return s;
 }
 
@@ -287,7 +344,7 @@ function loadLocal(){
     if(!raw) return null;
     let parsed = JSON.parse(raw);
     if(!parsed) return null;
-    if(parsed.v===3) parsed = migrateState(parsed);
+    if(parsed.v===3 || parsed.v===4) parsed = migrateState(parsed);
     if(parsed.v!==4) return null;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
     return parsed;
@@ -300,22 +357,16 @@ let STATE = loadLocal() || defaultState();
 /* =========================================================
    BARÈME / CALCUL DES POINTS
 ========================================================= */
-function ptsApero(sc){ return sc.apero.valide ? 5 : 0; }
-function ptsPhoto(sc){ return sc.photo ? 3 : 0; }
-function ptsCorde(sc){ const c=sc.corde||{}; return (c.manche1?2:0)+(c.manche2?2:0); }
+function ptsApero(sc){ return sc.apero.valide ? 20 : 0; }
+function ptsPhoto(sc){ return sc.photo ? 20 : 0; }
+function ptsCorde(sc){ const c=sc.corde||{}; return (c.manche1?10:0)+(c.manche2?10:0); }
 function ptsQuiz(sc){
   const n = sc.quiz;
   if(n===null || n===undefined || n==='') return 0;
-  const pct = (Number(n)/20)*100;
-  if(pct>=100) return 5;
-  if(pct>=90) return 4;
-  if(pct>=80) return 3;
-  if(pct>=70) return 2;
-  if(pct>=50) return 1;
-  return 0;
+  return Number(n); // 1 pt / bonne réponse, sur 20
 }
 function ptsBlindtest(sc){ return (sc.blindtest===null || sc.blindtest===undefined || sc.blindtest==='') ? 0 : Number(sc.blindtest); }
-function ptsCocktail(sc){ return Math.min(sc.cocktail.ingredients||0,5) + (sc.cocktail.bonus?2:0); }
+function ptsCocktail(sc){ return Math.min(sc.cocktail.ingredients||0,5)*4 + (sc.cocktail.bonus?20:0); }
 function ptsTotal(sc){ return ptsApero(sc)+ptsPhoto(sc)+ptsCorde(sc)+ptsQuiz(sc)+ptsBlindtest(sc)+ptsCocktail(sc); }
 
 function pointsBreakdown(sc){
@@ -498,7 +549,7 @@ function renderAccueil(){
   <div class="hero">
     <img src="${COVER_IMAGE}" alt="Agnès">
     <h1>🎉 Bienvenue ! 🎉</h1>
-    <p><b>${escapeHtml(STATE.titre)}</b><br>Aujourd'hui, votre équipe va devoir relever une série de défis...<br>Amusez-vous, et que la meilleure équipe gagne !</p>
+    <p><b>${escapeHtml(STATE.titre)}</b><br>Aujourd'hui, votre équipe va devoir relever une série de défis...<br>Amusez-vous, et que la meilleure équipe gagne !<br>🎁 Un cadeau sera offert à la meilleure équipe Enfant et à la meilleure équipe Adulte !</p>
   </div>
   <div class="card">
     <button class="btn" onclick="nav('/equipe')">👥 Choisir mon équipe</button>
@@ -506,7 +557,7 @@ function renderAccueil(){
     <button class="btn outline" style="color:var(--grad1);border-color:var(--grad1)" onclick="nav('/classement')">🏆 Voir le classement en direct</button>
   </div>
   <div class="card center muted">
-    12 équipes · 3 équipes Enfants · 9 équipes Adultes<br>Bonne chance à tous ! 💜
+    ${STATE.teams.length} équipes · ${STATE.teams.filter(t=>t.categorie==='enfant').length} équipes Enfants · ${STATE.teams.filter(t=>t.categorie==='adulte').length} équipes Adultes<br>Bonne chance à tous ! 💜
   </div>`;
 }
 
@@ -541,20 +592,17 @@ function renderDefiPage(id){
 
   if(id==='apero'){
     if(!monEquipe){
-      html += `<div class="card center"><p class="muted">Choisissez votre équipe pour découvrir votre défi apéro dès qu'il sera annoncé.</p><button class="btn" onclick="nav('/equipe')">👥 Choisir mon équipe</button></div>`;
+      html += `<div class="card center"><p class="muted">Choisissez votre équipe pour découvrir votre défi apéro.</p><button class="btn" onclick="nav('/equipe')">👥 Choisir mon équipe</button></div>`;
     } else {
       const sc = STATE.scores[monEquipe.id];
       const defiTxt = STATE.contenu.apero[monEquipe.id] || '';
       html += `<div class="card">
         <h3>Équipe : ${monEquipe.emoji} ${escapeHtml(monEquipe.nom)}</h3>`;
       if(sc.apero.valide){
-        html += `<div class="bareme-box">🎉 Bravo, votre défi apéro est validé ! (+5 points)</div>
+        html += `<div class="bareme-box">🎉 Bravo, votre défi apéro est validé ! (+20 points)</div>
         <div class="rules-box">${escapeHtml(defiTxt)}</div>`;
-      } else if(sc.apero.revele){
-        html += `<div class="rules-box"><b>🎶 Votre musique thème a sonné, à vous de jouer !</b><br>${escapeHtml(defiTxt)}</div>
-        <p class="muted">Une fois réalisé, montrez-le à l'organisatrice pour valider vos 5 points.</p>`;
       } else {
-        html += `<div class="rules-box">🤫 Votre défi surprise n'a pas encore été annoncé. Restez attentifs à la musique pendant l'apéro !</div>`;
+        html += `<div class="rules-box"><b>🎶 Votre défi apéro :</b><br>${escapeHtml(defiTxt)}</div>`;
       }
       html += `</div>`;
     }
@@ -604,9 +652,11 @@ let classementCat = 'adulte';
 function setClassementCat(c){ classementCat=c; render(); }
 function renderClassement(){
   const mon = getMonEquipe();
+  const nbAdultes = STATE.teams.filter(t=>t.categorie==='adulte').length;
+  const nbEnfants = STATE.teams.filter(t=>t.categorie==='enfant').length;
   const tabs = `<div class="tabbar">
-    <button class="${classementCat==='adulte'?'active':''}" onclick="setClassementCat('adulte')">🧑 Adultes (9)</button>
-    <button class="${classementCat==='enfant'?'active':''}" onclick="setClassementCat('enfant')">🧒 Enfants (3)</button>
+    <button class="${classementCat==='adulte'?'active':''}" onclick="setClassementCat('adulte')">🧑 Adultes (${nbAdultes})</button>
+    <button class="${classementCat==='enfant'?'active':''}" onclick="setClassementCat('enfant')">🧒 Enfants (${nbEnfants})</button>
   </div>`;
   const teams = STATE.teams.filter(t=>t.categorie===classementCat)
     .map(t=>({...t, total: ptsTotal(STATE.scores[t.id])}))
@@ -652,7 +702,7 @@ function renderAdmin(){
   if(!isAdminAuthed()){
     return `
     <div class="card">
-      <h2>⚙️ Espace organisatrice</h2>
+      <h2>⚙️ Espace Jessica</h2>
       <p class="muted">Entrez le code PIN pour gérer les scores.</p>
       <label>Code PIN</label>
       <input type="password" id="pin-input" inputmode="numeric" placeholder="••••">
@@ -669,7 +719,7 @@ function renderAdmin(){
   else if(adminTab==='contenu') body = renderAdminContenu();
   else if(adminTab==='partage') body = renderAdminPartage();
   else if(adminTab==='parametres') body = renderAdminParametres();
-  return `<div class="card"><h2>⚙️ Espace organisatrice</h2>${tabbar}</div>${body}`;
+  return `<div class="card"><h2>⚙️ Espace Jessica</h2>${tabbar}</div>${body}`;
 }
 function setAdminTab(t){ adminTab=t; render(); }
 
@@ -678,16 +728,16 @@ function renderAdminScores(){
     const sc = STATE.scores[t.id];
     return `<div class="team-admin-card">
       <h4><span class="team-dot" style="background:${t.couleur}"></span>${t.emoji} ${escapeHtml(t.nom)} <span class="muted">(${t.categorie})</span> — <b>${ptsTotal(sc)} pts</b></h4>
-      <div class="checkline"><input type="checkbox" ${sc.photo?'checked':''} onchange="updScore('${t.id}','photo',this.checked)"> Photo validée (3 pts)</div>
-      <div class="checkline"><input type="checkbox" ${sc.corde.manche1?'checked':''} onchange="updCorde('${t.id}','manche1',this.checked)"> Manche 1 gagnée (2 pts)</div>
-      <div class="checkline"><input type="checkbox" ${sc.corde.manche2?'checked':''} onchange="updCorde('${t.id}','manche2',this.checked)"> Manche 2 gagnée (2 pts)</div>
-      <label>Questionnaire — nombre de bonnes réponses (sur 20)</label>
+      <div class="checkline"><input type="checkbox" ${sc.photo?'checked':''} onchange="updScore('${t.id}','photo',this.checked)"> Photo validée (20 pts)</div>
+      <div class="checkline"><input type="checkbox" ${sc.corde.manche1?'checked':''} onchange="updCorde('${t.id}','manche1',this.checked)"> Manche 1 gagnée (10 pts)</div>
+      <div class="checkline"><input type="checkbox" ${sc.corde.manche2?'checked':''} onchange="updCorde('${t.id}','manche2',this.checked)"> Manche 2 gagnée (10 pts)</div>
+      <label>Questionnaire — nombre de bonnes réponses (sur 20, 1 pt chacune)</label>
       <input type="number" min="0" max="20" value="${sc.quiz===null?'':sc.quiz}" placeholder="ex: 17" onchange="updScore('${t.id}','quiz',this.value===''?null:Number(this.value))">
-      <label>Blind test — nombre de bonnes réponses (sur ${t.categorie==='adulte'?20:10})</label>
+      <label>Blind test — nombre de bonnes réponses (sur ${t.categorie==='adulte'?20:10}, 1 pt chacune)</label>
       <input type="number" min="0" max="${t.categorie==='adulte'?20:10}" value="${sc.blindtest===null?'':sc.blindtest}" placeholder="ex: 14" onchange="updScore('${t.id}','blindtest',this.value===''?null:Number(this.value))">
-      <label>Cocktail — ingrédients de base trouvés (0 à 5)</label>
+      <label>Cocktail — ingrédients de base trouvés (0 à 5, 4 pts chacun)</label>
       <input type="number" min="0" max="5" value="${sc.cocktail.ingredients}" onchange="updCocktail('${t.id}','ingredients',this.value)">
-      <div class="checkline"><input type="checkbox" ${sc.cocktail.bonus?'checked':''} onchange="updCocktail('${t.id}','bonus',this.checked)"> Ingrédient bonus trouvé (+2 pts)</div>
+      <div class="checkline"><input type="checkbox" ${sc.cocktail.bonus?'checked':''} onchange="updCocktail('${t.id}','bonus',this.checked)"> Ingrédient bonus trouvé (+20 pts)</div>
     </div>`;
   }).join('');
 }
@@ -705,20 +755,17 @@ function updCocktail(teamId, field, value){
 }
 
 function renderAdminApero(){
-  return `<div class="card"><p class="muted">💡 Pendant l'apéro, diffusez la musique thème de chaque équipe quand vous le souhaitez, puis cliquez sur "Révéler" : l'équipe voit alors son défi apparaître sur son téléphone. Une fois le défi réalisé, cliquez sur "Valider" pour attribuer les 5 points.</p></div>` +
+  return `<div class="card"><p class="muted">💡 Chaque équipe voit son défi apéro dès qu'elle ouvre l'appli. Une fois le défi réalisé, cliquez sur "Valider" pour attribuer les 20 points.</p></div>` +
   STATE.teams.map(t=>{
     const sc = STATE.scores[t.id];
     const defiTxt = STATE.contenu.apero[t.id] || '';
     let statusBox, actions;
     if(sc.apero.valide){
-      statusBox = `<div class="bareme-box">✅ Défi validé (5 pts)</div>`;
+      statusBox = `<div class="bareme-box">✅ Défi validé (20 pts)</div>`;
       actions = `<button class="btn small secondary" onclick="resetApero('${t.id}')">↺ Réinitialiser</button>`;
-    } else if(sc.apero.revele){
-      statusBox = `<div class="rules-box">🎶 Défi révélé à l'équipe, en attente de réalisation.</div>`;
-      actions = `<button class="btn ok" onclick="setApero('${t.id}','valide',true)">✔️ Valider (5 pts)</button> <button class="btn small secondary" onclick="setApero('${t.id}','revele',false)">↩️ Annuler la révélation</button>`;
     } else {
-      statusBox = `<div class="rules-box muted">🤫 Pas encore révélé à l'équipe.</div>`;
-      actions = `<button class="btn" onclick="setApero('${t.id}','revele',true)">👁️ Révéler à l'équipe</button>`;
+      statusBox = `<div class="rules-box muted">⏳ Défi visible par l'équipe, en attente de réalisation.</div>`;
+      actions = `<button class="btn ok" onclick="setApero('${t.id}','valide',true)">✔️ Valider (20 pts)</button>`;
     }
     return `<div class="team-admin-card">
       <h4><span class="team-dot" style="background:${t.couleur}"></span>${t.emoji} ${escapeHtml(t.nom)}</h4>
