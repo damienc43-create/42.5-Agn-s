@@ -195,7 +195,7 @@ const DEFAULT_APERO_DEFIS = {
 
 const DEFAULT_COCKTAIL_BASE = ["Rhum blanc","Citron vert","Sucre de canne","Menthe fraîche","Eau gazeuse"];
 const DEFAULT_COCKTAIL_BONUS = "Angostura bitters";
-const DEFAULT_QUIZ_INFO = "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier — Jessica saisit ensuite le nombre de bonnes réponses.";
+const DEFAULT_QUIZ_INFO = "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier.";
 const DEFAULT_BLINDTEST_INFO = "Un blind test musical : chansons, musiques de films et de séries. 20 extraits pour les équipes adultes, 10 extraits pour les équipes enfants. Votre équipe doit désigner son champion pour ce défi — chaque bonne réponse rapporte 1 point.";
 
 const DEFIS_DEF = [
@@ -215,7 +215,7 @@ const DEFIS_DEF = [
    regles: DEFAULT_BLINDTEST_INFO,
    bareme:"1 point par bonne réponse (jusqu'à 20 pts pour les adultes, 10 pts pour les enfants)"},
   {id:'cocktail', nom:'Cocktail mystère', emoji:'🍸',
-   regles:"Retrouvez les ingrédients du cocktail mystère d'Agnès !",
+   regles:"Retrouvez les ingrédients du cocktail mystère de Robin !",
    bareme:"4 points par ingrédient trouvé parmi les 5 de base (20 pts max) + <b>20 pts bonus</b> si vous trouvez le 6ème ingrédient, plus difficile à deviner. Total possible : <b>40 points</b>"},
 ];
 
@@ -322,6 +322,20 @@ function migrateState(s){
   ];
   if(s.contenu && OLD_BLINDTEST_INFOS.includes(s.contenu.blindtestInfo)){
     s.contenu.blindtestInfo = DEFAULT_BLINDTEST_INFO;
+  }
+  const OLD_QUIZ_INFOS = [
+    "Un questionnaire sur la vie d'Agnès (et un peu de culture générale). À remplir en équipe sur papier — l'organisatrice saisit ensuite le pourcentage de bonnes réponses.",
+    "Un questionnaire sur la vie d'Agnès. À remplir en équipe sur papier — l'organisatrice saisit ensuite le pourcentage de bonnes réponses.",
+    "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier — Jessica saisit ensuite le nombre de bonnes réponses.",
+    "Un questionnaire de 20 questions sur la vie d'Agnès. À remplir en équipe sur papier.",
+    "Un questionnaire de 20 questions sur la vie de Robin. À remplir en équipe sur papier.",
+  ];
+  if(s.contenu && OLD_QUIZ_INFOS.includes(s.contenu.quizInfo)){
+    s.contenu.quizInfo = DEFAULT_QUIZ_INFO;
+  }
+  const OLD_TITRES = ["Les 42,5 ans de Robin"];
+  if(OLD_TITRES.includes(s.titre)){
+    s.titre = "Les 42,5 ans d'Agnès";
   }
   const OLD_APERO_TEXTS = {
     pirates:   "Prendre les bancs et faire semblant de ramer. Simuler des vagues en se penchant tous ensemble : devant, à gauche, à droite... jusqu'à affronter une grosse tempête.",
